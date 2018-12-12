@@ -30,18 +30,26 @@ async function scraper(appId = 'com.entrayn.qbapp') {
     console.log(`\n${appId} ratings:`);
     console.log(ratings.join('\n'));
     await browser.close();
+    return ratings;
   } catch (e) {
     console.log('error', e);
   }
 }
 const appIds = ['com.entrayn.qbapp', 'com.LTGExamPracticePlatform.Prep4GRE'];
 const additionalAppIds = ['com.galvanizetestprep.vocabbuilder', 'com.magoosh.gre.quiz.vocabulary'];
-function main() {
+async function main() {
   const type = process.argv[2] || 'partial';
+
+  console.log('Fetching ratings for:', type === 'all' ? appIds.concat(additionalAppIds) : appIds);
+  console.log('\n------------------------------------------------------------');
+
+  // This will end up with results out of order?
+  const baseRatings = await Promise.all(appIds.map(scraper));
+  // console.log(baseRatings);
   if (type === 'all') {
-    appIds.push(...additionalAppIds);
+    console.log('\n------------------------------------------------------------');
+    const additionalRatings = await Promise.all(additionalAppIds.map(scraper));
+    // console.log(additionalRatings);
   }
-  console.log('Fetching ratings for:', appIds);
-  appIds.forEach(scraper);
 }
 main();
