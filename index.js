@@ -1,11 +1,9 @@
-/**
- * @fileoverview Search developers.google.com/web for articles tagged
- * "Headless Chrome" and scrape results from the results page.
- */
+const puppeteer = require('puppeteer');
+const chalk = require('chalk');
+const log = console.log;
+
 async function scraper(appId = 'com.entrayn.qbapp') {
   try {
-    const puppeteer = require('puppeteer');
-
     const browser = await puppeteer.launch();
     const page = await browser.newPage();
 
@@ -27,29 +25,34 @@ async function scraper(appId = 'com.entrayn.qbapp') {
       ratings.push(ratings.reduce((acc, cur) => acc + cur));
       return [stars, ratings];
     }, resultsSelector);
-    console.log(`\n${appId} ratings:`);
-    console.log(ratings.map(item => item.join('\t')).join('\n'));
+    log(`\n${chalk.bgGreen(appId)} ratings:`);
+    log(ratings.map(item => item.join('\t')).join('\n'));
     await browser.close();
     return ratings;
   } catch (e) {
-    console.log('error', e);
+    log('error', e);
   }
 }
 const appIds = ['com.entrayn.qbapp', 'com.LTGExamPracticePlatform.Prep4GRE'];
 const additionalAppIds = ['com.galvanizetestprep.vocabbuilder', 'com.magoosh.gre.quiz.vocabulary'];
 async function main() {
   const type = process.argv[2] || 'partial';
+  log(chalk.green('------------------------------------------------------------'));
 
-  console.log('Fetching ratings for:', type === 'all' ? appIds.concat(additionalAppIds) : appIds);
-  console.log('\n------------------------------------------------------------');
+  log(
+    chalk.green('Fetching ratings for:\n') +
+      chalk.bgGreen((type === 'all' ? appIds.concat(additionalAppIds) : appIds).join('\n'))
+  );
+  log(chalk.green('\n------------------------------------------------------------'));
 
   // This will end up with results out of order?
   const baseRatings = await Promise.all(appIds.map(scraper));
-  // console.log(baseRatings);
+  // log(baseRatings);
   if (type === 'all') {
-    console.log('\n------------------------------------------------------------');
+    log(chalk.green('\n------------------------------------------------------------'));
     const additionalRatings = await Promise.all(additionalAppIds.map(scraper));
-    // console.log(additionalRatings);
+    // log(additionalRatings);
   }
+  log(chalk.green('\n------------------------------------------------------------'));
 }
 main();
