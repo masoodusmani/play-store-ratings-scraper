@@ -25,7 +25,7 @@ async function scraper(appId = 'com.entrayn.qbapp') {
       ratings.push(ratings.reduce((acc, cur) => acc + cur));
       return [stars, ratings];
     }, resultsSelector);
-    log(`\n${chalk.bgGreen(appId)} ratings:`);
+    log(`\n${chalk.bold.magenta(appId)} ratings:`);
     log(ratings.map(item => item.join('\t')).join('\n'));
     await browser.close();
     return ratings;
@@ -37,22 +37,22 @@ const appIds = ['com.entrayn.qbapp', 'com.LTGExamPracticePlatform.Prep4GRE'];
 const additionalAppIds = ['com.galvanizetestprep.vocabbuilder', 'com.magoosh.gre.quiz.vocabulary'];
 async function main() {
   const type = process.argv[2] || 'partial';
-  log(chalk.green('------------------------------------------------------------'));
+  log(chalk.magenta('------------------------------------------------------------'));
 
   log(
-    chalk.green('Fetching ratings for:\n') +
-      chalk.bgGreen((type === 'all' ? appIds.concat(additionalAppIds) : appIds).join('\n'))
+    chalk.magenta('Fetching ratings for:\n') +
+      chalk.bold.magenta((type === 'all' ? appIds.concat(additionalAppIds) : appIds).join('\n'))
   );
-  log(chalk.green('\n------------------------------------------------------------'));
+  log(chalk.magenta('\n------------------------------------------------------------'));
 
   // This will end up with results out of order?
   const baseRatings = await Promise.all(appIds.map(scraper));
   // log(baseRatings);
   if (type === 'all') {
-    log(chalk.green('\n------------------------------------------------------------'));
+    log(chalk.magenta('\n------------------------------------------------------------'));
     const additionalRatings = await Promise.all(additionalAppIds.map(scraper));
     // log(additionalRatings);
   }
-  log(chalk.green('\n------------------------------------------------------------'));
+  log(chalk.magenta('\n------------------------------------------------------------'));
 }
 main();
