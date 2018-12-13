@@ -28,7 +28,7 @@ async function scraper(appId = 'com.entrayn.qbapp') {
       return [stars, ratings];
     }, resultsSelector);
     console.log(`\n${appId} ratings:`);
-    console.log(ratings.join('\n'));
+    console.log(ratings.map(item => item.join('\t')).join('\n'));
     await browser.close();
     return ratings;
   } catch (e) {
