@@ -15,12 +15,13 @@ async function scraper(appId = 'com.entrayn.qbapp') {
 
     // Extract the results from the page.
     const ratings = await page.evaluate(resultsSelector => {
-      const anchors = Array.from(document.querySelectorAll(resultsSelector));
-      const allRatings = document.querySelectorAll(resultsSelector);
-      const expandedRatings = allRatings[1];
-      const allStars = Array.from(expandedRatings.parentNode.nextSibling.children);
-      const stars = allStars.map(star => star.children[0].innerText);
-      const ratings = allStars.map(star => parseInt(star.children[1].title.replace(/,/, ''), 10));
+      const allRatingsOnPage = document.querySelectorAll(resultsSelector);
+      const fullRatings = allRatingsOnPage[1];
+      const starsWithRatings = Array.from(fullRatings.parentNode.nextSibling.children);
+      const stars = starsWithRatings.map(star => star.children[0].innerText);
+      const ratings = starsWithRatings.map(star =>
+        parseInt(star.children[1].title.replace(/,/, ''), 10)
+      );
       stars.push('total');
       ratings.push(ratings.reduce((acc, cur) => acc + cur));
       return [stars, ratings];
